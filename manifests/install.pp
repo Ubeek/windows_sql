@@ -45,6 +45,7 @@ class windows_sql::install(
       content => template('windows_sql/checkifinstall.erb'),
       require  => Windows_isos['SQLServer'],
     }
+    notify {"Config path is ${configurationfile}":}
     exec{"${action} SQL":
       command  => "\$letter = \$null;if(test-path '${xmlpath}'){[xml]\$xml = New-Object system.Xml.XmlDocument;[xml]\$xml = Get-Content '${xmlpath}';foreach(\$iso in \$xml.configuration.isos.iso){if(\$iso.ImagePath -eq '${isopath}'){\$letter = \$iso.DriveLetter;}}if(\$letter -ne \$null){Push-Location;cd \$letter':';.\\setup.exe /CONFIGURATIONFILE='${configurationfile} /qs';Pop-Location;}}{exit 0;}",
       onlyif   => 'C:\\checkifinstall.ps1',
