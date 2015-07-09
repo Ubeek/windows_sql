@@ -29,6 +29,7 @@ class windows_sql::install(
   $assvcpass         = $agtsvcpass,
   $rptsvcpass        = $agtsvcpass,
   $rssvcpass         = $agtsvcpass,  
+  $sqlsvcpass        = $agtsvcpass,
 ){
   validate_bool($forcerestart)
   if(!empty($sqlpath)){
@@ -37,7 +38,7 @@ class windows_sql::install(
       content => template('windows_sql/checkifinstall.erb'),
     }
     exec{"${action} SQL":
-      command  => "setup.exe /IAcceptSQLServerLicenseTerms /AGTSVCPASSWORD='${agtsvcpass}' /ASSVCPASSWORD='${assvcpass}' /RSSVCPASSWORD='${rssvcpass}' /CONFIGURATIONFILE='${configurationfile}';",
+      command  => "setup.exe /IAcceptSQLServerLicenseTerms /SQLSVCPASSWORD='${sqlsvcpass}' /AGTSVCPASSWORD='${agtsvcpass}' /ASSVCPASSWORD='${assvcpass}' /RSSVCPASSWORD='${rssvcpass}' /CONFIGURATIONFILE='${configurationfile}';",
       cwd      => "$sqlpath",
       path     => "$sqlpath",
       provider => 'powershell',
@@ -51,7 +52,7 @@ class windows_sql::install(
     }
     notify {"Config path is ${configurationfile}":}
     exec{"${action} SQL":
-      command  => "\$letter = \$null;if(test-path '${xmlpath}'){[xml]\$xml = New-Object system.Xml.XmlDocument;[xml]\$xml = Get-Content '${xmlpath}';foreach(\$iso in \$xml.configuration.isos.iso){if(\$iso.ImagePath -eq '${isopath}'){\$letter = \$iso.DriveLetter;}}if(\$letter -ne \$null){Push-Location;cd \$letter':';.\\setup.exe /IAcceptSQLServerLicenseTerms /AGTSVCPASSWORD='${agtsvcpass}' /ASSVCPASSWORD='${assvcpass}' /RSSVCPASSWORD='${rssvcpass}' /CONFIGURATIONFILE='${configurationfile}';Pop-Location;}}{exit 0;}",
+      command  => "\$letter = \$null;if(test-path '${xmlpath}'){[xml]\$xml = New-Object system.Xml.XmlDocument;[xml]\$xml = Get-Content '${xmlpath}';foreach(\$iso in \$xml.configuration.isos.iso){if(\$iso.ImagePath -eq '${isopath}'){\$letter = \$iso.DriveLetter;}}if(\$letter -ne \$null){Push-Location;cd \$letter':';.\\setup.exe /IAcceptSQLServerLicenseTerms /AGTSVCPASSWORD='${agtsvcpass}' /ASSVCPASSWORD='${assvcpass}' /RSSVCPASSWORD='${rssvcpass}' /SQLSVCPASSWORD='${sqlsvcpass}' /CONFIGURATIONFILE='${configurationfile}';Pop-Location;}}{exit 0;}",
       onlyif   => 'C:\\checkifinstall.ps1',
       provider => 'powershell',
       timeout  => 0,
