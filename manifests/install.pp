@@ -25,6 +25,10 @@ class windows_sql::install(
   $configurationfile = $configurationfile,
   $action            = $action,
   $forcerestart      = $forcerestart,
+  $agtsvcpass        = hiera('ems_sccm::profile::mssql::sql_svcPass'),
+  $assvcpass         = $agtsvcpass,
+  $rptsvcpass        = $agtsvcpass,
+  $rssvcpass         = $agtsvcpass,  
 ){
   validate_bool($forcerestart)
   if(!empty($sqlpath)){
@@ -33,7 +37,7 @@ class windows_sql::install(
       content => template('windows_sql/checkifinstall.erb'),
     }
     exec{"${action} SQL":
-      command  => "setup.exe /IAcceptSQLServerLicenseTerms /CONFIGURATIONFILE='${configurationfile}';",
+      command  => "setup.exe /IAcceptSQLServerLicenseTerms /AGTSVCPASSWORD='${agtsvcpass}' /ASSVCPASSWORD='${assvcpass}' /RSSVCPASSWORD='${rssvcpass}' /CONFIGURATIONFILE='${configurationfile}';",
       cwd      => "$sqlpath",
       path     => "$sqlpath",
       provider => 'powershell',
