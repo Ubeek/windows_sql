@@ -26,10 +26,10 @@ class windows_sql::install(
   $action            = $action,
   $forcerestart      = $forcerestart,
   $agtsvcpass        = hiera('ems_sccm::profile::mssql::sql_svcPass'),
-  $assvcpass         = $agtsvcpass,
-  $rptsvcpass        = $agtsvcpass,
-  $rssvcpass         = $agtsvcpass,  
-  $sqlsvcpass        = $agtsvcpass,
+  $assvcpass         = hiera('ems_sccm::profile::mssql::sql_svcPass'),
+  $rptsvcpass        = hiera('ems_sccm::profile::mssql::sql_svcPass'),
+  $rssvcpass         = hiera('ems_sccm::profile::mssql::sql_svcPass'), 
+  $sqlsvcpass        = hiera('ems_sccm::profile::mssql::sql_svcPass'),
 ){
   validate_bool($forcerestart)
   if(!empty($sqlpath)){
